@@ -48,7 +48,10 @@ const routes = [
     handler: (request, h) => {
         const { username, password } = request.payload
 
-        return `Selamat datang kembali ${username}`
+        // return `Selamat datang kembali ${username}`
+        
+        // menggunakan hapi toolkit
+        return h.response(`Selamat datang kembali ${username}`).code(200);
     }
 },
 {
