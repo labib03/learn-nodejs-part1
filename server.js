@@ -10,7 +10,16 @@ const requestListener = (req, res) => {
     }
 
     if(method === 'POST'){
-        res.end(`Hai, method yang anda gunakan adalah: ${method}`)
+        let body = [];
+         req.on('data', (chunk) => {
+            body.push(chunk)
+        })
+        req.on('end', ()=>{
+            body = Buffer.concat(body).toString();
+            const convertFromJson = JSON.parse(body);
+            const { name } = convertFromJson;
+            res.end(`Hai ${name}, method yang anda gunakan adalah: ${method}`) 
+         })
     }
 
     if(method === 'PUT'){
