@@ -44,7 +44,6 @@ const getAllNotesHandler = () => ({
 
 const getNoteByIdHandler = (request, h) => {
     const { id } = request.params;
-    console.log('===>', id)
 
     const note = notes.find(item => item.id === id);
 
@@ -65,4 +64,39 @@ const getNoteByIdHandler = (request, h) => {
     return response
 }
 
-module.exports = { addNoteHandler, getAllNotesHandler, getNoteByIdHandler };
+const editByIdHandler = (request, h) => {
+    const { id } = request.params
+    const { body, tags, title } = request.payload
+
+    const updatedAt = new Date().toISOString();
+    const indexNote = notes.findIndex((note) => note.id === id)
+
+    if (indexNote !== -1) {
+        notes[indexNote] = {
+            ...notes[indexNote],
+            title,
+            tags,
+            body,
+            updatedAt
+        }
+
+        const response = h.response({
+            status: 'success',
+            message: 'Catatan berhasil diperbaharui'
+        })
+
+        response.code(200)
+        return response
+    }
+
+    const response = h.response({
+        status: 'fail',
+        message: 'Gagal memperbaharui catatan. ID tidak ditemukan'
+    })
+
+    response.code(404)
+    return response
+
+}    
+
+module.exports = { addNoteHandler, getAllNotesHandler, getNoteByIdHandler, editByIdHandler };
