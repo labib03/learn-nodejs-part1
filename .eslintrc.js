@@ -4,8 +4,8 @@ module.exports = {
         "commonjs": true,
         "es2021": true
     },
-    // "extends": "eslint:recommended",
-    "extends": "airbnb-base",
+    "extends": "eslint:recommended",
+    // "extends": "airbnb-base",
     "overrides": [
     ],
     "parserOptions": {
