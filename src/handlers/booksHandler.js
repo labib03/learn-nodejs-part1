@@ -26,7 +26,6 @@ const addBookHandler = (request, h) => {
     
     
     const isSuccess = name && year && author && summary && publisher && pageCount && readPage ? true : false;
-   console.log('==>', isSuccess);
 
     if(isSuccess && pageCount > readPage){
         books.push(newBook)
@@ -104,7 +103,32 @@ const getAllBooksHandler = (request, h) => {
     return response
 }
 
+const getBookById = (request, h) => {
+    const { bookId } = request.params
+
+    const findBook = books.find(book => book.id === bookId)
+
+    if(!findBook){
+        const response = h.response({
+            status: 'fail',
+            message: 'Buku tidak ditemukan'
+        }).code(404)
+
+        return response
+    }
+
+    const response = h.response({
+        status: 'success',
+        data: {
+            book: findBook
+        }
+    }).code(200)
+
+    return response
+}
+
 module.exports = {
     addBookHandler,
-    getAllBooksHandler
+    getAllBooksHandler,
+    getBookById
 }
