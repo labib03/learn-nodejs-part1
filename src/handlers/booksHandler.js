@@ -25,7 +25,7 @@ const addBookHandler = (request, h) => {
     }
     
     
-    const isSuccess = name && year && author && summary && publisher && pageCount && readPage ? true : false;
+    const isSuccess = name && year && author && summary && publisher && pageCount && readPage  ? true : false;
 
     if(isSuccess && pageCount > readPage){
         books.push(newBook)
@@ -127,8 +127,65 @@ const getBookById = (request, h) => {
     return response
 }
 
+const updateBookHandler = (request, h) => {
+    const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
+    const { bookId } = request.params;
+
+    let bookIndex = books.findIndex(book => book.id === bookId);
+   
+    if(!name){
+        const response = h.response({
+            status: 'fail',
+            message: 'Gagal memperbarui buku. Mohon isi nama buku'
+        }).code(400);
+
+        return response
+    }
+
+    if(readPage > pageCount){
+        const response = h.response({
+            status: 'fail',
+            message: 'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount'
+        }).code(400);
+
+        return response
+    }
+
+    if(bookIndex < 0){
+        const response = h.response({
+            status: 'fail',
+            message: 'Gagal memperbarui buku. Id tidak ditemukan'
+        }).code(404)
+
+        return response
+    }
+
+    const updatedAt = new Date().toISOString();
+    books[bookIndex] = {
+        ...books[bookIndex],
+        name,
+        year,
+        author,
+        summary,
+        publisher,
+        pageCount,
+        readPage,
+        reading,
+        updatedAt
+    }
+
+    const response = h.response({
+        status: 'success',
+        message: 'Buku berhasil diperbarui'
+    }).code(200)
+
+    return response
+
+}
+
 module.exports = {
     addBookHandler,
     getAllBooksHandler,
-    getBookById
+    getBookById,
+    updateBookHandler
 }
