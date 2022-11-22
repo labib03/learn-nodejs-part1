@@ -24,10 +24,12 @@ const addBookHandler = (request, h) => {
         updatedAt,
     }
     
-    
-    const isSuccess = name && year && author && summary && publisher && pageCount && readPage  ? true : false;
+    const posibleReadPage = readPage || readPage === 0
+    const imposible = pageCount === 0 ? true : readPage > pageCount ? true : false;
+    const isSuccess = name && year && author && summary && publisher && pageCount && posibleReadPage  ? true : false;
 
-    if(isSuccess && pageCount > readPage){
+
+    if(isSuccess && !imposible){
         books.push(newBook)
 
         const response = h.response({
@@ -52,7 +54,7 @@ const addBookHandler = (request, h) => {
             return response;
         }
     
-        if(readPage > pageCount){
+        if(imposible){
             const response = h.response({
                 status: 'fail',
                 message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount'
@@ -73,6 +75,7 @@ const addBookHandler = (request, h) => {
 
 const getAllBooksHandler = (request, h) => {
     const isEmpty = books.length === 0 ? true : false;
+    const params = request.query;
 
     if(isEmpty){
         const response = h.response({
@@ -83,6 +86,63 @@ const getAllBooksHandler = (request, h) => {
         }).code(200)
 
         return response
+    }
+
+    if(params){
+        const isReading = params?.reading === 0 ? false : true;
+        const isFinished = params?.finished > 0 ? true : false;
+
+
+        if(params?.reading){
+            const filteredBooks = books.filter(book => book.reading === isReading)
+            const newBooksCollection = filteredBooks.map(book =>({
+                id: book.id, 
+                name: book.name, 
+                publisher: book.publisher
+            }));
+            const response = h.response({
+                status: 'success',
+                data: {
+                    books: newBooksCollection
+                } 
+            }).code(200)
+        
+            return response
+        }
+
+        if(params?.finished >= 0){
+            const filteredBooks = books.filter(book => book.finished === isFinished)
+            const newBooksCollection = filteredBooks.map(book =>({
+                id: book.id, 
+                name: book.name, 
+                publisher: book.publisher
+            }));
+            const response = h.response({
+                status: 'success',
+                data: {
+                    books: newBooksCollection
+                } 
+            }).code(200)
+        
+            return response
+        }
+
+        if(params?.name){
+            const filteredBooks = books.filter(book => book.name.toLowerCase().includes(params?.name?.toLowerCase()))
+            const newBooksCollection = filteredBooks.map(book =>({
+                id: book.id, 
+                name: book.name, 
+                publisher: book.publisher
+            }));
+            const response = h.response({
+                status: 'success',
+                data: {
+                    books: newBooksCollection
+                } 
+            }).code(200)
+        
+            return response
+        }
     }
 
     const newBooksCollection = books.map(book => {
