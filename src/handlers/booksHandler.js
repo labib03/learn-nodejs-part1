@@ -24,12 +24,12 @@ const addBookHandler = (request, h) => {
         updatedAt,
     }
     
-    const posibleReadPage = readPage || readPage === 0
-    const imposible = pageCount === 0 ? true : readPage > pageCount ? true : false;
-    const isSuccess = name && year && author && summary && publisher && pageCount && posibleReadPage  ? true : false;
+    const possibleReadPage = readPage || readPage === 0
+    const impossible = pageCount === 0 ? true : readPage > pageCount ? true : false;
+    const isSuccess = name && year && author && summary && publisher && pageCount && possibleReadPage  ? true : false;
 
 
-    if(isSuccess && !imposible){
+    if(isSuccess && !impossible){
         books.push(newBook)
 
         const response = h.response({
@@ -54,7 +54,7 @@ const addBookHandler = (request, h) => {
             return response;
         }
     
-        if(imposible){
+        if(impossible){
             const response = h.response({
                 status: 'fail',
                 message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount'
