@@ -24,10 +24,13 @@ const addBookHandler = (request, h) => {
         updatedAt,
     }
     
-    books.push(newBook)
     
     const isSuccess = name && year && author && summary && publisher && pageCount && readPage ? true : false;
-    if(isSuccess && !readPage > pageCount){
+   console.log('==>', isSuccess);
+
+    if(isSuccess && pageCount > readPage){
+        books.push(newBook)
+
         const response = h.response({
             status: 'success',
             message: 'Buku berhasil ditambahkan',
@@ -69,6 +72,39 @@ const addBookHandler = (request, h) => {
     }
 }
 
+const getAllBooksHandler = (request, h) => {
+    const isEmpty = books.length === 0 ? true : false;
+
+    if(isEmpty){
+        const response = h.response({
+            status: 'success',
+            data: {
+                books: []
+            }
+        }).code(200)
+
+        return response
+    }
+
+    const newBooksCollection = books.map(book => {
+        return {
+            id: book.id, 
+            name: book.name, 
+            publisher: book.publisher
+        }
+    })
+
+    const response = h.response({
+        status: 'success',
+        data: {
+            books: newBooksCollection
+        }
+    }).code(200)
+
+    return response
+}
+
 module.exports = {
-    addBookHandler
+    addBookHandler,
+    getAllBooksHandler
 }
